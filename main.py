@@ -65,7 +65,7 @@ if __name__ == '__main__':
         'heuristic',
         help="--heuristic : the name of the file you want to be read in",
         type=int,
-        choices=[1, 2, 3, 4, 5, 6]
+        choices=[1, 2, 3, 4, 5, 6, 7]
     )
 
     args = parser.parse_args()
@@ -75,6 +75,6 @@ if __name__ == '__main__':
 
     board, start, end = read_board(args.file)
 
-    astar(board, start, end, 5)
+    astar(board, start, end, args.heuristic)
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
