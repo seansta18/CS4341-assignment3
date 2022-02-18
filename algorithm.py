@@ -82,7 +82,8 @@ def get_heuristic(curr_pd, end, choice, board):
         return 3 * admissible_heuristic(curr_pd, board, manhattan_dist)
     else:
         manhattan_dist = horiz_dist + vert_dist
-        return 1 # Heuristic from machine learning
+        return 1  # Heuristic from machine learning
+
 
 def admissible_heuristic(curr_pd, board, manhattan_dist):
     actions = next_actions(curr_pd, len(board), len(board[0]))
@@ -186,31 +187,35 @@ def timecost(action_datum, board):
     elif action_datum[ACTION] == 3:  # Bash
         return 3 + board[action_datum[MOVE][POS][X]][action_datum[MOVE][POS][Y]]
 
+
 # returns the value of the squares immediately adjacent to the robot
 def neighborValue(xloc, yloc, board):
     return [board[xloc - 1][yloc - 1], board[xloc - 1][yloc], board[xloc - 1][yloc + 1],
             board[xloc][yloc - 1], board[xloc][yloc + 1],
             board[xloc + 1][yloc - 1], board[xloc + 1][yloc], board[xloc + 1][yloc + 1]]
 
+
 list_of_nValues = []
 
-# returns a list of x distances from goal
-def xDistFromGoal(goalX, listOfX):
-    xDist = []
 
-    for x in listOfX:
-        diff = abs(goalX - x)
-        xDist.append(diff)
-    return xDist
+# returns a list of x distances from goal
+def xDistFromGoal(goal_x, list_of_x):
+    x_dist = []
+
+    for x in list_of_x:
+        diff = abs(goal_x - x)
+        x_dist.append(diff)
+    return x_dist
+
 
 # returns a list of y distances from goal
-def yDistFromGoal(goalY, listOfY):
-    yDist = []
+def yDistFromGoal(goal_y, list_of_y):
+    y_dist = []
 
-    for y in listOfY:
-        diff = abs(goalY - y)
-        yDist.append(diff)
-    return yDist
+    for y in list_of_y:
+        diff = abs(goal_y - y)
+        y_dist.append(diff)
+    return y_dist
 
 
 # board is a 2d array, start is (X, Y), end is (X, Y)
@@ -291,7 +296,6 @@ def astar(board, start, end, heuristic, print_results=True):
                 y_poses.append(action[MOVE][POS][1])
                 states.append(num_to_action(action[ACTION]))
 
-
         total_cost = f[real_end]
         print("Total time cost was " + str(total_cost))
         print("Number of actions: " + str(len(processed_path) - 1))
@@ -300,18 +304,6 @@ def astar(board, start, end, heuristic, print_results=True):
 
     x_dists = xDistFromGoal(goal_x, x_poses)
     y_dists = yDistFromGoal(goal_y, y_poses)
-
-    # write to csv
-    # currently only have one col: state
-
-    #with open('data.csv', 'w', newline='') as csvfile:
-     #   fieldnames = ['State', 'x distance', 'y distance', None]
-      #  thewriter = csv.DictWriter(csvfile, fieldnames=fieldnames);
-       # thewriter.writeheader()
-        #for state in states:
-         #   for x in x_dists:
-          #      for y in y_dists:
-           #         thewriter.writerow({'State': state, 'x distance': x, 'y distance': y})
 
     dict = {'State': states, 'x distance': x_dists, 'y distance': y_dists}
     df = pd.DataFrame(dict)
