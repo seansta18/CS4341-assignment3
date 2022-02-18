@@ -3,6 +3,7 @@
 # Press ⌃R to execute it or replace it with your code.
 # Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
 
+import time
 import argparse
 from algorithm import *
 from BoardCreation import *
@@ -76,5 +77,12 @@ if __name__ == '__main__':
     board, start, end = read_board(args.file)
 
     astar(board, start, end, args.heuristic)
+
+    goal = 0
+    start = time.time()
+    while goal > (time.time() - start):
+        file = create_board(1, 1)
+        board, start, end = read_board(file)
+        astar(board, start, end, args.heuristic)
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
