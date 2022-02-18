@@ -183,6 +183,13 @@ def timecost(action_datum, board):
     elif action_datum[ACTION] == 3:  # Bash
         return 3 + board[action_datum[MOVE][POS][X]][action_datum[MOVE][POS][Y]]
 
+# returns the value of the squares immediately adjacent to the robot
+def neighborValue(xloc, yloc, board):
+    return [board[xloc - 1][yloc - 1], board[xloc - 1][yloc], board[xloc - 1][yloc + 1],
+            board[xloc][yloc - 1], board[xloc][yloc + 1],
+            board[xloc + 1][yloc - 1], board[xloc + 1][yloc], board[xloc + 1][yloc + 1]]
+
+list_of_nValues = []
 
 # board is a 2d array, start is (X, Y), end is (X, Y)
 def astar(board, start, end, heuristic, print_results=True):
@@ -243,6 +250,8 @@ def astar(board, start, end, heuristic, print_results=True):
         if action[ACTION] == BASH:
             processed_path.append((step(move_pd, 1, len(board), len(board[0])), FORWARD))
 
+    states = []
+            
     if print_results:
         print("Start path...")
         for action in processed_path:
@@ -251,12 +260,24 @@ def astar(board, start, end, heuristic, print_results=True):
             else:
                 print("From " + str(action[MOVE][POS]) + " " + num_to_dir(action[MOVE][DIR]) + " make action " +
                       num_to_action(action[ACTION]))
+                
+                states.append(num_to_action(action[ACTION]))
 
+        
         total_cost = f[real_end]
         print("Total time cost was " + str(total_cost))
         print("Number of actions: " + str(len(processed_path) - 1))
         print("Score is " + str(100 - total_cost))
         print("Expanded " + str(nodes_expanded) + " nodes")
 
+    # write to csv
+    # currently only have one col: state
+    with open('data.csv', 'w', newline='') as csvfile:
+        fieldnames = ['State', 'Neighbor Values', None]
+        thewriter = csv.DictWriter(csvfile, fieldnames=fieldnames);
+        thewriter.writeheader()
+        for state in states:
+            thewriter.writerow({'State': state}) 
+    
     total_cost = f[real_end]
     return processed_path, total_cost, nodes_expanded
