@@ -218,6 +218,11 @@ def yDistFromGoal(goal_y, list_of_y):
     return y_dist
 
 
+states = []
+x_poses = []
+y_poses = []
+
+
 # board is a 2d array, start is (X, Y), end is (X, Y)
 def astar(board, start, end, heuristic, print_results=True):
     start_pd = (start, NORTH)
@@ -277,9 +282,6 @@ def astar(board, start, end, heuristic, print_results=True):
         if action[ACTION] == BASH:
             processed_path.append((step(move_pd, 1, len(board), len(board[0])), FORWARD))
 
-    states = []
-    x_poses = []
-    y_poses = []
     goal_x = processed_path[len(processed_path) - 1][0][0][0]
     goal_y = processed_path[len(processed_path) - 1][0][0][1]
 
@@ -288,6 +290,10 @@ def astar(board, start, end, heuristic, print_results=True):
         for action in processed_path:
             if action == processed_path[len(processed_path) - 1]:
                 print("End at " + str(action[MOVE][POS]) + " " + num_to_dir(action[MOVE][DIR]) + "...")
+                states.append("Goal")
+                x_poses.append(action[MOVE][POS][0])
+                y_poses.append(action[MOVE][POS][1])
+                print(action[MOVE][POS])
             else:
                 print("From " + str(action[MOVE][POS]) + " " + num_to_dir(action[MOVE][DIR]) + " make action " +
                       num_to_action(action[ACTION]))
@@ -311,3 +317,9 @@ def astar(board, start, end, heuristic, print_results=True):
 
     total_cost = f[real_end]
     return processed_path, total_cost, nodes_expanded
+
+# def getState():
+#   return states;
+
+# def getXDists():
+#    return xDistFromGoal(goal_x, x_poses)
