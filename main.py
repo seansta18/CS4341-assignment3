@@ -79,8 +79,7 @@ if __name__ == '__main__':
     total_time = 1 #If we want to do a time goal add it here in seconds
     start_time = time.time()
     while total_time > (time.time() - start_time):
-        file = create_board(10, 10)
-        board, start, end = read_board(file)
+        board, start, end = create_board_array(10, 10)
         astar(board, start, end, args.heuristic)
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
