@@ -1,6 +1,6 @@
 from pqdict import pqdict
 import math
-import csv
+import pandas as pd
 
 # constants for tuples
 
@@ -77,10 +77,12 @@ def get_heuristic(curr_pd, end, choice, board):
     elif choice == 5:
         manhattan_dist = horiz_dist + vert_dist
         return admissible_heuristic(curr_pd, board, manhattan_dist)
-    else:
+    elif choice == 6:
         manhattan_dist = horiz_dist + vert_dist
         return 3 * admissible_heuristic(curr_pd, board, manhattan_dist)
-
+    else:
+        manhattan_dist = horiz_dist + vert_dist
+        return 1 # Heuristic from machine learning
 
 def admissible_heuristic(curr_pd, board, manhattan_dist):
     actions = next_actions(curr_pd, len(board), len(board[0]))
@@ -192,6 +194,25 @@ def neighborValue(xloc, yloc, board):
 
 list_of_nValues = []
 
+# returns a list of x distances from goal
+def xDistFromGoal(goalX, listOfX):
+    xDist = []
+
+    for x in listOfX:
+        diff = abs(goalX - x)
+        xDist.append(diff)
+    return xDist
+
+# returns a list of y distances from goal
+def yDistFromGoal(goalY, listOfY):
+    yDist = []
+
+    for y in listOfY:
+        diff = abs(goalY - y)
+        yDist.append(diff)
+    return yDist
+
+
 # board is a 2d array, start is (X, Y), end is (X, Y)
 def astar(board, start, end, heuristic, print_results=True):
     start_pd = (start, NORTH)
@@ -252,7 +273,11 @@ def astar(board, start, end, heuristic, print_results=True):
             processed_path.append((step(move_pd, 1, len(board), len(board[0])), FORWARD))
 
     states = []
-            
+    x_poses = []
+    y_poses = []
+    goal_x = processed_path[len(processed_path) - 1][0][0][0]
+    goal_y = processed_path[len(processed_path) - 1][0][0][1]
+
     if print_results:
         print("Start path...")
         for action in processed_path:
@@ -261,24 +286,36 @@ def astar(board, start, end, heuristic, print_results=True):
             else:
                 print("From " + str(action[MOVE][POS]) + " " + num_to_dir(action[MOVE][DIR]) + " make action " +
                       num_to_action(action[ACTION]))
-                
+
+                x_poses.append(action[MOVE][POS][0])
+                y_poses.append(action[MOVE][POS][1])
                 states.append(num_to_action(action[ACTION]))
 
-        
+
         total_cost = f[real_end]
         print("Total time cost was " + str(total_cost))
         print("Number of actions: " + str(len(processed_path) - 1))
         print("Score is " + str(100 - total_cost))
         print("Expanded " + str(nodes_expanded) + " nodes")
 
+    x_dists = xDistFromGoal(goal_x, x_poses)
+    y_dists = yDistFromGoal(goal_y, y_poses)
+
     # write to csv
     # currently only have one col: state
-    with open('data.csv', 'w', newline='') as csvfile:
-        fieldnames = ['State', 'Neighbor Values', None]
-        thewriter = csv.DictWriter(csvfile, fieldnames=fieldnames);
-        thewriter.writeheader()
-        for state in states:
-            thewriter.writerow({'State': state}) 
-    
+
+    #with open('data.csv', 'w', newline='') as csvfile:
+     #   fieldnames = ['State', 'x distance', 'y distance', None]
+      #  thewriter = csv.DictWriter(csvfile, fieldnames=fieldnames);
+       # thewriter.writeheader()
+        #for state in states:
+         #   for x in x_dists:
+          #      for y in y_dists:
+           #         thewriter.writerow({'State': state, 'x distance': x, 'y distance': y})
+
+    dict = {'State': states, 'x distance': x_dists, 'y distance': y_dists}
+    df = pd.DataFrame(dict)
+    df.to_csv('data.csv')
+
     total_cost = f[real_end]
     return processed_path, total_cost, nodes_expanded
