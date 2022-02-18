@@ -285,21 +285,24 @@ def astar(board, start, end, heuristic, print_results=True):
     goal_x = processed_path[len(processed_path) - 1][0][0][0]
     goal_y = processed_path[len(processed_path) - 1][0][0][1]
 
+    print(goal_x)
+    print(goal_y)
+
     if print_results:
         print("Start path...")
         for action in processed_path:
             if action == processed_path[len(processed_path) - 1]:
                 print("End at " + str(action[MOVE][POS]) + " " + num_to_dir(action[MOVE][DIR]) + "...")
                 states.append("Goal")
-                x_poses.append(action[MOVE][POS][0])
-                y_poses.append(action[MOVE][POS][1])
+                x_poses.append(abs(goal_x - action[MOVE][POS][0]))
+                y_poses.append(abs(goal_y - action[MOVE][POS][1]))
                 print(action[MOVE][POS])
             else:
                 print("From " + str(action[MOVE][POS]) + " " + num_to_dir(action[MOVE][DIR]) + " make action " +
                       num_to_action(action[ACTION]))
 
-                x_poses.append(action[MOVE][POS][0])
-                y_poses.append(action[MOVE][POS][1])
+                x_poses.append(abs(goal_x - action[MOVE][POS][0]))
+                y_poses.append(abs(goal_y - action[MOVE][POS][1]))
                 states.append(num_to_action(action[ACTION]))
 
         total_cost = f[real_end]
@@ -308,10 +311,7 @@ def astar(board, start, end, heuristic, print_results=True):
         print("Score is " + str(100 - total_cost))
         print("Expanded " + str(nodes_expanded) + " nodes")
 
-    x_dists = xDistFromGoal(goal_x, x_poses)
-    y_dists = yDistFromGoal(goal_y, y_poses)
-
-    dict = {'State': states, 'x distance': x_dists, 'y distance': y_dists}
+    dict = {'State': states, 'x distance': x_poses, 'y distance': y_poses}
     df = pd.DataFrame(dict)
     df.to_csv('data.csv')
 
