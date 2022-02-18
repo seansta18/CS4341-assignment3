@@ -1,5 +1,6 @@
 from pqdict import pqdict
 import math
+import pandas as pd
 
 # constants for tuples
 
@@ -76,9 +77,12 @@ def get_heuristic(curr_pd, end, choice, board):
     elif choice == 5:
         manhattan_dist = horiz_dist + vert_dist
         return admissible_heuristic(curr_pd, board, manhattan_dist)
-    else:
+    elif choice == 6:
         manhattan_dist = horiz_dist + vert_dist
         return 3 * admissible_heuristic(curr_pd, board, manhattan_dist)
+    else:
+        manhattan_dist = horiz_dist + vert_dist
+        return 1  # Heuristic from machine learning
 
 
 def admissible_heuristic(curr_pd, board, manhattan_dist):
@@ -184,6 +188,36 @@ def timecost(action_datum, board):
         return 3 + board[action_datum[MOVE][POS][X]][action_datum[MOVE][POS][Y]]
 
 
+# returns the value of the squares immediately adjacent to the robot
+def neighborValue(xloc, yloc, board):
+    return [board[xloc - 1][yloc - 1], board[xloc - 1][yloc], board[xloc - 1][yloc + 1],
+            board[xloc][yloc - 1], board[xloc][yloc + 1],
+            board[xloc + 1][yloc - 1], board[xloc + 1][yloc], board[xloc + 1][yloc + 1]]
+
+
+list_of_nValues = []
+
+
+# returns a list of x distances from goal
+def xDistFromGoal(goal_x, list_of_x):
+    x_dist = []
+
+    for x in list_of_x:
+        diff = abs(goal_x - x)
+        x_dist.append(diff)
+    return x_dist
+
+
+# returns a list of y distances from goal
+def yDistFromGoal(goal_y, list_of_y):
+    y_dist = []
+
+    for y in list_of_y:
+        diff = abs(goal_y - y)
+        y_dist.append(diff)
+    return y_dist
+
+
 # board is a 2d array, start is (X, Y), end is (X, Y)
 def astar(board, start, end, heuristic, print_results=True):
     start_pd = (start, NORTH)
@@ -243,6 +277,12 @@ def astar(board, start, end, heuristic, print_results=True):
         if action[ACTION] == BASH:
             processed_path.append((step(move_pd, 1, len(board), len(board[0])), FORWARD))
 
+    states = []
+    x_poses = []
+    y_poses = []
+    goal_x = processed_path[len(processed_path) - 1][0][0][0]
+    goal_y = processed_path[len(processed_path) - 1][0][0][1]
+
     if print_results:
         print("Start path...")
         for action in processed_path:
@@ -252,11 +292,22 @@ def astar(board, start, end, heuristic, print_results=True):
                 print("From " + str(action[MOVE][POS]) + " " + num_to_dir(action[MOVE][DIR]) + " make action " +
                       num_to_action(action[ACTION]))
 
+                x_poses.append(action[MOVE][POS][0])
+                y_poses.append(action[MOVE][POS][1])
+                states.append(num_to_action(action[ACTION]))
+
         total_cost = f[real_end]
         print("Total time cost was " + str(total_cost))
         print("Number of actions: " + str(len(processed_path) - 1))
         print("Score is " + str(100 - total_cost))
         print("Expanded " + str(nodes_expanded) + " nodes")
+
+    x_dists = xDistFromGoal(goal_x, x_poses)
+    y_dists = yDistFromGoal(goal_y, y_poses)
+
+    dict = {'State': states, 'x distance': x_dists, 'y distance': y_dists}
+    df = pd.DataFrame(dict)
+    df.to_csv('data.csv')
 
     total_cost = f[real_end]
     return processed_path, total_cost, nodes_expanded
