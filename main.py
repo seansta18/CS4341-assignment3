@@ -74,14 +74,12 @@ if __name__ == '__main__':
     print(args.file)
     print(args.heuristic)
 
-    board, start, end = read_board(args.file)
+    #board, start, end = read_board(args.file)
 
-    astar(board, start, end, args.heuristic)
-
-    goal = 0
-    start = time.time()
-    while goal > (time.time() - start):
-        file = create_board(1, 1)
+    total_time = 1 #If we want to do a time goal add it here in seconds
+    start_time = time.time()
+    while total_time > (time.time() - start_time):
+        file = create_board(10, 10)
         board, start, end = read_board(file)
         astar(board, start, end, args.heuristic)
 
