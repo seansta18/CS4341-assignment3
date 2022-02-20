@@ -188,8 +188,15 @@ def timecost(action_datum, board):
         return 3 + board[action_datum[MOVE][POS][X]][action_datum[MOVE][POS][Y]]
 
 def inBounds(x, y, board):
-    if x < 0 or y < 0 or x > len(board) or y > len(board):
+    if x < 0:
         return False
+    if y < 0:
+        return False
+    if x >= len(board):
+        return False
+    if y >= len(board):
+        return False
+
     return True
 
 
@@ -201,7 +208,6 @@ def neighborValue(xloc, yloc, board):
             if x == 0 and y == 0:
                 pass
             elif inBounds(x + xloc, y + yloc, board):
-                print(inBounds(x + xloc, y + yloc, board))
                 values.append(board[xloc + x][yloc + y])
             else:
                 values.append(999999)
