@@ -196,12 +196,12 @@ def inBounds(x, y, board):
 # returns the value of the squares immediately adjacent to the robot
 def neighborValue(xloc, yloc, board):
     values = []
-    temp = [-1, 0, 1]
-    for x in temp:
-        for y in temp:
-            if temp[x] == 0 and temp[y] == 0:
-
+    for x in range(-1, 2):
+        for y in range(-1, 2):
+            if x == 0 and y == 0:
+                pass
             elif inBounds(x + xloc, y + yloc, board):
+                print(inBounds(x + xloc, y + yloc, board))
                 values.append(board[xloc + x][yloc + y])
             else:
                 values.append(999999)
@@ -307,28 +307,30 @@ def astar(board, start, end, heuristic, print_results=True):
         print("\n\nStart path...")
         lastMoveCost = 0
         for action in processed_path:
-            surrounding.append(neighborValue(action[MOVE][POS][0],action[MOVE][POS][1], board))
             if action == processed_path[len(processed_path) - 1]:
                 print("End at " + str(action[MOVE][POS]) + " " + num_to_dir(action[MOVE][DIR]) + "...")
                 states.append("Goal")
                 x_poses.append(abs(goal_x - action[MOVE][POS][0]))
                 y_poses.append(abs(goal_y - action[MOVE][POS][1]))
+                surrounding.append(neighborValue(action[MOVE][POS][0], action[MOVE][POS][1], board))
                 costs.append(1)
             if action == processed_path[0]:
                 print("Start at " + str(action[MOVE][POS]) + " " + num_to_dir(action[MOVE][DIR]) + "...")
                 states.append("Start")
                 x_poses.append(abs(goal_x - action[MOVE][POS][0]))
                 y_poses.append(abs(goal_y - action[MOVE][POS][1]))
+                surrounding.append(neighborValue(action[MOVE][POS][0], action[MOVE][POS][1], board))
                 costs.append(f[real_end])
                 lastMoveCost = f[real_end]
-            if action == action == processed_path[len(processed_path) - 1] :
-                print('') #avoid writing "None" action state to file
+            if action == processed_path[len(processed_path) - 1]:
+                pass #avoid writing "None" action state to file
             else:
                 print("From " + str(action[MOVE][POS]) + " " + num_to_dir(action[MOVE][DIR]) + " make action " +
                       num_to_action(action[ACTION]))
 
                 x_poses.append(abs(goal_x - action[MOVE][POS][0]))
                 y_poses.append(abs(goal_y - action[MOVE][POS][1]))
+                surrounding.append(neighborValue(action[MOVE][POS][0], action[MOVE][POS][1], board))
                 states.append(num_to_action(action[ACTION]))
                 costs.append(lastMoveCost - f[action[MOVE]]) #TODO: cost of this node = last node cost - this node cost; please check that this works as it should
                 lastMoveCost = lastMoveCost - f[action[MOVE]]
