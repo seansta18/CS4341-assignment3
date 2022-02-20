@@ -187,12 +187,26 @@ def timecost(action_datum, board):
     elif action_datum[ACTION] == 3:  # Bash
         return 3 + board[action_datum[MOVE][POS][X]][action_datum[MOVE][POS][Y]]
 
+def inBounds(x, y, board):
+    if x < 0 or y < 0 or x > len(board) or y > len(board):
+        return False
+    return True
+
 
 # returns the value of the squares immediately adjacent to the robot
 def neighborValue(xloc, yloc, board):
-    return [board[xloc - 1][yloc - 1], board[xloc - 1][yloc], board[xloc - 1][yloc + 1],
-            board[xloc][yloc - 1], board[xloc][yloc + 1],
-            board[xloc + 1][yloc - 1], board[xloc + 1][yloc], board[xloc + 1][yloc + 1]]
+    values = []
+    temp = [-1, 0, 1]
+    for x in temp:
+        for y in temp:
+            if temp[x] == 0 and temp[y] == 0:
+
+            elif inBounds(x + xloc, y + yloc, board):
+                values.append(board[xloc + x][yloc + y])
+            else:
+                values.append(999999)
+
+    return values
 
 
 list_of_nValues = []
@@ -223,6 +237,7 @@ states = []
 x_poses = []
 y_poses = []
 costs = []
+surrounding = []
 
 
 # board is a 2d array, start is (X, Y), end is (X, Y)
@@ -292,6 +307,7 @@ def astar(board, start, end, heuristic, print_results=True):
         print("\n\nStart path...")
         lastMoveCost = 0
         for action in processed_path:
+            surrounding.append(neighborValue(action[MOVE][POS][0],action[MOVE][POS][1], board))
             if action == processed_path[len(processed_path) - 1]:
                 print("End at " + str(action[MOVE][POS]) + " " + num_to_dir(action[MOVE][DIR]) + "...")
                 states.append("Goal")
@@ -323,7 +339,7 @@ def astar(board, start, end, heuristic, print_results=True):
         print("Score is " + str(100 - total_cost))
         print("Expanded " + str(nodes_expanded) + " nodes")
 
-    dict = {'State': states, 'x distance': x_poses, 'y distance': y_poses, 'A* cost to goal (dependant)' : costs}
+    dict = {'surrounding cells': surrounding, 'x distance': x_poses, 'y distance': y_poses, 'A* cost to goal (dependant)' : costs}
     df = pd.DataFrame(dict)
     df.to_csv('data.csv')
 
