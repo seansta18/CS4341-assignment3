@@ -243,7 +243,15 @@ states = []
 x_poses = []
 y_poses = []
 costs = []
-surrounding = []
+surrounding_1 = []
+surrounding_2 = []
+surrounding_3 = []
+surrounding_4 = []
+surrounding_5 = []
+surrounding_6 = []
+surrounding_7 = []
+surrounding_8 = []
+
 
 
 # board is a 2d array, start is (X, Y), end is (X, Y)
@@ -318,14 +326,30 @@ def astar(board, start, end, heuristic, print_results=True):
                 states.append("Goal")
                 x_poses.append(abs(goal_x - action[MOVE][POS][0]))
                 y_poses.append(abs(goal_y - action[MOVE][POS][1]))
-                surrounding.append(neighborValue(action[MOVE][POS][0], action[MOVE][POS][1], board))
+                values = neighborValue(action[MOVE][POS][0], action[MOVE][POS][1], board)
+                surrounding_1.append(values[0])
+                surrounding_2.append(values[1])
+                surrounding_3.append(values[2])
+                surrounding_4.append(values[3])
+                surrounding_5.append(values[4])
+                surrounding_6.append(values[5])
+                surrounding_7.append(values[6])
+                surrounding_8.append(values[7])
                 costs.append(1)
             if action == processed_path[0]:
                 print("Start at " + str(action[MOVE][POS]) + " " + num_to_dir(action[MOVE][DIR]) + "...")
                 states.append("Start")
                 x_poses.append(abs(goal_x - action[MOVE][POS][0]))
                 y_poses.append(abs(goal_y - action[MOVE][POS][1]))
-                surrounding.append(neighborValue(action[MOVE][POS][0], action[MOVE][POS][1], board))
+                values = neighborValue(action[MOVE][POS][0], action[MOVE][POS][1], board)
+                surrounding_1.append(values[0])
+                surrounding_2.append(values[1])
+                surrounding_3.append(values[2])
+                surrounding_4.append(values[3])
+                surrounding_5.append(values[4])
+                surrounding_6.append(values[5])
+                surrounding_7.append(values[6])
+                surrounding_8.append(values[7])
                 costs.append(f[real_end])
                 lastMoveCost = f[real_end]
             if action == processed_path[len(processed_path) - 1]:
@@ -336,7 +360,15 @@ def astar(board, start, end, heuristic, print_results=True):
 
                 x_poses.append(abs(goal_x - action[MOVE][POS][0]))
                 y_poses.append(abs(goal_y - action[MOVE][POS][1]))
-                surrounding.append(neighborValue(action[MOVE][POS][0], action[MOVE][POS][1], board))
+                values = neighborValue(action[MOVE][POS][0], action[MOVE][POS][1], board)
+                surrounding_1.append(values[0])
+                surrounding_2.append(values[1])
+                surrounding_3.append(values[2])
+                surrounding_4.append(values[3])
+                surrounding_5.append(values[4])
+                surrounding_6.append(values[5])
+                surrounding_7.append(values[6])
+                surrounding_8.append(values[7])
                 states.append(num_to_action(action[ACTION]))
                 costs.append(lastMoveCost - f[action[MOVE]]) #TODO: cost of this node = last node cost - this node cost; please check that this works as it should
                 lastMoveCost = lastMoveCost - f[action[MOVE]]
@@ -347,7 +379,7 @@ def astar(board, start, end, heuristic, print_results=True):
         print("Score is " + str(100 - total_cost))
         print("Expanded " + str(nodes_expanded) + " nodes")
 
-    dict = {'surrounding cells': surrounding, 'x distance': x_poses, 'y distance': y_poses, 'A* cost to goal (dependant)' : costs}
+    dict = {'top left': surrounding_1,'top': surrounding_2, 'top right': surrounding_3, 'left': surrounding_4, 'right': surrounding_5, 'bottom left': surrounding_6, 'bottom': surrounding_7, 'bottom right': surrounding_8, 'x distance': x_poses, 'y distance': y_poses, 'A* cost to goal (dependant)' : costs}
     df = pd.DataFrame(dict)
     df.to_csv('data.csv')
 
