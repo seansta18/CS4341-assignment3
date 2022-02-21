@@ -81,8 +81,7 @@ def get_heuristic(curr_pd, end, choice, board):
         manhattan_dist = horiz_dist + vert_dist
         return 3 * admissible_heuristic(curr_pd, board, manhattan_dist)
     else:
-        manhattan_dist = horiz_dist + vert_dist
-        return 1  # Heuristic from machine learning
+        return 5.3919 * horiz_dist + 5.4093 * vert_dist - 65.7739
 
 
 def admissible_heuristic(curr_pd, board, manhattan_dist):
