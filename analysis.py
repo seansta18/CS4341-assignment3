@@ -1,7 +1,7 @@
 import time
 import tracemalloc
 from algorithm import astar
-from main import read_board
+from astar import read_board
 from BoardCreation import create_board
 
 
